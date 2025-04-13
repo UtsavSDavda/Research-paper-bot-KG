@@ -4,8 +4,6 @@ import csv
 import time
 import json
 
-#NEO4J CONNECTION
-
 #CONFIG
 KEYWORDS = ["Natural language processing","Large language models","Language models","Transformers","NLP","RAG","Knowledge graphs"]
 RESULTS_LIMIT = 100  
@@ -184,7 +182,7 @@ def main():
     print("\n")
     print("Check if you want to change the keywords.")
     
-    #get_all_papers_by_keyword()
+    get_all_papers_by_keyword()
     
     with open(PAPER_IDS_FILE,"r") as f:
         urls = f.readlines()
