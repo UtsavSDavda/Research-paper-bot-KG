@@ -1,7 +1,6 @@
 # For now I will use OpenAlex via requests to get the data.
 import requests
 import csv
-import time
 import json
 
 #CONFIG
@@ -10,33 +9,6 @@ RESULTS_LIMIT = 100
 CSV_OUTPUT = "researchdata/kg_triplets.csv"
 TIME_SLEEP = 1
 PAPER_IDS_FILE ="paperids/ids.txt"
-
-def extract_triplets(paper):
-    triplets = []
-    paper_title = paper.get("display_name", "").strip()
-    
-    # Authors
-    for author in paper.get("authorships", []):
-        name = author["author"]["display_name"]
-        triplets.append((paper_title, "AUTHORED_BY", name))
-
-    # Concepts (filtering only those that match the filter topic)
-    for concept in paper.get("concepts", []):
-        if FILTER_TOPIC.lower() in concept["display_name"].lower():
-            triplets.append((paper_title, "HAS_CONCEPT", concept["display_name"]))
-
-    # Venue
-    venue = paper.get("host_venue", {}).get("display_name")
-    if venue:
-        triplets.append((paper_title, "PUBLISHED_IN", venue))
-
-    return triplets
-
-def save_triplets_to_csv(triplets, filename):
-    with open(filename, mode='w', newline='', encoding='utf-8') as file:
-        writer = csv.writer(file)
-        writer.writerow(["subject", "predicate", "object"])
-        writer.writerows(triplets)
 
 def extract_id_from_url(url):
     return url.strip().split("/")[-1]
@@ -176,7 +148,7 @@ def store_paper_metadata(paper_id):
             first_author_name,first_author_orcid,author_data_list,paper_keywords,topics,paper_concepts,related_works,referenced_works_count]
 
 def main():     
-    
+
     print("Fetching data for the followinf keywords:")
     print(KEYWORDS)
     print("\n")
