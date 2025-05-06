@@ -53,4 +53,24 @@ def papers_same_concept_by_id(paper_id):
         print("Exception in function:"+str(e))
         return []
 
-print(papers_by_topic("Advanced Graph Neural Networks"))
+def hot_topics_past_years(number_of_years:int,number_of_topics:int):
+    """Get the most trending research topics for the past N years as provided in the input.
+    RETURNS a Tuple in the format: (Topic name, number of publications in the past N years).
+    """
+    topics = []
+    try:
+        query = """
+                MATCH (p:Paper)-[:HAS_KEYWORD]->(k:Keyword)
+                WHERE p.year >= date().year - $numberofyears 
+                WITH k.name as topic, count(p) as publications
+                ORDER BY publications DESC
+                LIMIT $numberoftopics
+                RETURN topic, publications;
+                """
+        result = session.run(query,parameters={"numberofyears":number_of_years,"numberoftopics": number_of_topics})
+        for r in result:
+            topics.append((r["topic"],r["publications"]))
+        return topics
+    except Exception as e:
+        print("Exception in function: "+str(e))
+        return []
